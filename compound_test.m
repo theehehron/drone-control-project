@@ -60,4 +60,3 @@ quat_pass_count = test_count - quat_fail_count;
 quat_pass_percent = round(quat_pass_count/test_count*100, 2);
 disp(strcat("dcm_to_quat passed ", num2str(quat_pass_count), " of ", num2str(test_count),...
             " tests (", num2str(quat_pass_percent), "%)."))
-disp("tests completed")
