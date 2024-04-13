@@ -7,11 +7,12 @@ fail_count = 0;
 for mags = 1:6
     for testseq = 1:50
         test_count = test_count + 1;
-        A = 2.*(rand(3, 3)-1/2)*order_of_mag;
-        B = 2.*(rand(3, 3)-1/2)*order_of_mag;
-        
-        C1 = A*B;
-        C2 = matrix_multiply_3x3(A, B);
+        phi = 2*pi*(rand(1, 1)-1/2);
+        theta = 2*pi*(rand(1, 1)-1/2);
+        psi = 2*pi*(rand(1, 1)-1/2);
+
+        C1 = angle2dcm(psi, theta, phi);
+        C2 = euler_to_dcm([phi, theta, psi]);
         
         for i = 1:3
             for j = 1:3

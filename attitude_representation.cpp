@@ -19,8 +19,7 @@ Matrix matrix_multiply_3_by_3(Matrix const &a, Matrix const &b){
 
 Matrix euler_to_dcm(std::vector<float> &euler_angles){
     // takes vector [phi, theta, psi] and computes DCM
-    
-    std::cout << euler_angles[0] << ", " << euler_angles[1] << ", " << euler_angles[2] << std::endl;
+
     Matrix C1v = {{cos(euler_angles[2]),   sin(euler_angles[2]),   0}, \
                   {-sin(euler_angles[2]),  cos(euler_angles[2]),   0}, \
                   {                    0,                     0,   1}};
