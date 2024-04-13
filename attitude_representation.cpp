@@ -48,7 +48,7 @@ std::vector<float> dcm_to_quat(Matrix const &Cbv){
     float q_tilde3 = static_cast<float>(pow((.25*(1-Cbv[0][0]+Cbv[1][1]-Cbv[2][2])), .5));
     float q_tilde4 = static_cast<float>(pow((.25*(1-Cbv[0][0]-Cbv[1][1]+Cbv[2][2])), .5));
 
-    float q_tilde[4] = {q_tilde1, q_tilde2, q_tilde3, q_tilde4};
+    float q_tilde[4] = {abs(q_tilde1), abs(q_tilde2), abs(q_tilde3), abs(q_tilde4)};
 
     int n = sizeof(q_tilde) / sizeof(q_tilde[0]);
     auto max_element = std::max_element(q_tilde, q_tilde + n);
@@ -60,7 +60,7 @@ std::vector<float> dcm_to_quat(Matrix const &Cbv){
     case 1:
         // std::cout << "1";
         q[0] = (Cbv[1][2]-Cbv[2][1])/(4*q_tilde[1]);
-        q[1] = q_tilde[1];
+        q[1] = q_tilde2;
         q[2] = (Cbv[0][1]+Cbv[1][0])/(4*q_tilde[1]);
         q[3] = (Cbv[2][0]+Cbv[0][2])/(4*q_tilde[1]);
         break;
@@ -68,7 +68,7 @@ std::vector<float> dcm_to_quat(Matrix const &Cbv){
         // std::cout << "2";
         q[0] = (Cbv[2][0]-Cbv[0][2])/(4*q_tilde[2]);
         q[1] = (Cbv[0][1]+Cbv[1][0])/(4*q_tilde[2]);
-        q[2] = q_tilde[2];
+        q[2] = q_tilde3;
         q[3] = (Cbv[1][2]+Cbv[2][1])/(4*q_tilde[2]);
         break;
     case 3:
@@ -76,11 +76,11 @@ std::vector<float> dcm_to_quat(Matrix const &Cbv){
         q[0] = (Cbv[1][0]-Cbv[0][1])/(4*q_tilde[3]);
         q[1] = (Cbv[0][2]+Cbv[2][0])/(4*q_tilde[3]);
         q[2] = (Cbv[1][2]+Cbv[2][1])/(4*q_tilde[3]);
-        q[3] = q_tilde[3];
+        q[3] = q_tilde4;
         break;
     default:
         // std::cout << "0";
-        q[0] = q_tilde[0];
+        q[0] = q_tilde1;
         q[1] = (Cbv[1][2]-Cbv[2][1])/(4*q_tilde[0]);
         q[2] = (Cbv[2][0]-Cbv[0][2])/(4*q_tilde[0]);
         q[3] = (Cbv[0][1]-Cbv[1][0])/(4*q_tilde[0]);
