@@ -15,12 +15,17 @@ for mags = 1:6
         theta = 2*pi*(rand(1, 1)-1/2)*order_of_mag;
         psi = 2*pi*(rand(1, 1)-1/2)*order_of_mag;
 
+        % test of euler_to_dcm
         C1 = angle2dcm(psi, theta, phi);
         C2 = euler_to_dcm([phi, theta, psi]);
 
+        % test of dcm_to_quat
         q1 = dcm2quat(C1);
         q2 = dcm_to_quat(C1);
         
+
+
+        %% Checks for angle_2_dcm
         for i = 1:3
             for j = 1:3
                 if (C1(i, j) - C2(i, j))/C1(i, j) > tolerance
@@ -35,6 +40,10 @@ for mags = 1:6
                 end
             end
         end
+
+
+        
+        %% Checks for dcm_to_quat
         for i = 1:4
             if (q1(i) - q2(i))/q1(i) > tolerance && (q1(i) + q2(i))/q1(i) > tolerance
                 warning(strcat("test failed at order of mag: ", num2str(order_of_mag)));
