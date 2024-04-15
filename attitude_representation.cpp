@@ -41,6 +41,18 @@ Matrix euler_to_dcm(std::vector<float> &euler_angles){
 
 
 
+std::vector<float> dcm_to_euler(Matrix const &Cbv){
+    // Returns the euler angles associated with DCM Cbv
+    std::vector<float> euler_angles(3, 0);
+    euler_angles[0] = atan2(Cbv[1][2], Cbv[2][2]);
+    euler_angles[1] = -asin(Cbv[0][2]);
+    euler_angles[2] = atan2(Cbv[0][1], Cbv[0][0]);
+
+    return euler_angles;
+}
+
+
+
 std::vector<float> dcm_to_quat(Matrix const &Cbv){
     // returns quaternion representation corresponding to the DCM Cbv
     float q_tilde1 = static_cast<float>(pow((.25*(1+Cbv[0][0]+Cbv[1][1]+Cbv[2][2])), .5));
