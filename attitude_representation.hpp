@@ -2,10 +2,10 @@
 #define ATTITUDE_REPRESENTATION_HPP
 
 
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <algorithm>
+#include "ArduinoSTL.h"
+#include "vector"
+#include "cmath"
+#include "algorithm"
 
 
 typedef std::vector<std::vector<float>> Matrix;

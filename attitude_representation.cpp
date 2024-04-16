@@ -70,28 +70,24 @@ std::vector<float> dcm_to_quat(Matrix const &Cbv){
     switch (max_index)
     {
     case 1:
-        // std::cout << "1";
         q[0] = (Cbv[1][2]-Cbv[2][1])/(4*q_tilde[1]);
         q[1] = q_tilde2;
         q[2] = (Cbv[0][1]+Cbv[1][0])/(4*q_tilde[1]);
         q[3] = (Cbv[2][0]+Cbv[0][2])/(4*q_tilde[1]);
         break;
     case 2:
-        // std::cout << "2";
         q[0] = (Cbv[2][0]-Cbv[0][2])/(4*q_tilde[2]);
         q[1] = (Cbv[0][1]+Cbv[1][0])/(4*q_tilde[2]);
         q[2] = q_tilde3;
         q[3] = (Cbv[1][2]+Cbv[2][1])/(4*q_tilde[2]);
         break;
     case 3:
-        // std::cout << "3";
         q[0] = (Cbv[1][0]-Cbv[0][1])/(4*q_tilde[3]);
         q[1] = (Cbv[0][2]+Cbv[2][0])/(4*q_tilde[3]);
         q[2] = (Cbv[1][2]+Cbv[2][1])/(4*q_tilde[3]);
         q[3] = q_tilde4;
         break;
     default:
-        // std::cout << "0";
         q[0] = q_tilde1;
         q[1] = (Cbv[1][2]-Cbv[2][1])/(4*q_tilde[0]);
         q[2] = (Cbv[2][0]-Cbv[0][2])/(4*q_tilde[0]);
