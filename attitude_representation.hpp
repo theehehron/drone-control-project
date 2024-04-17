@@ -20,4 +20,5 @@ std::vector<float> dcm_to_euler(Matrix const &Cbv);
 
 std::vector<float> dcm_to_quat(Matrix const &Cbv);
 
+float trap_integration(float const &y0, float const &y1, unsigned long const &timestep);
 #endif
