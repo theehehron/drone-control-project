@@ -7,6 +7,14 @@ float p, q, r;
 std::vector<int16_t> gyrocals(3);
 float PI_ag = 3.141593;
 
+// Set Initial Conditions
+Matrix Cbv_0 = {{1, 0, 0}, \
+                {0, 1, 0}, \
+                {0, 0, 1}};
+
+int initial_time = 0;
+int previous_time = intitial_time;
+
 void setup() {
   Serial.begin(115200);
 
@@ -31,6 +39,10 @@ void setup() {
 void loop() {
   std::vector<float> pqr = gyrorates_rad_per_sec(MPU_ADDR, gyrocals);
 
+  int current = millis();
+  // Do integration stuff here
+  previous = current;
+  
   Serial.print(pqr[0], 3);
   Serial.print(", ");
   Serial.print(pqr[1], 3);
