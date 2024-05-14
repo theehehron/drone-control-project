@@ -3,17 +3,43 @@
 #include "AGmpu6050.hpp"
 
 const int MPU_ADDR = 0x68; // I2C address of the MPU-6050
-float p, q, r;
+std::vector<float> pqr(3);
 std::vector<int16_t> gyrocals(3);
 float PI_ag = 3.141593;
+int16_t counter = 0;
 
 // Set Initial Conditions
-Matrix Cbv_0 = {{1, 0, 0}, \
-                {0, 1, 0}, \
-                {0, 0, 1}};
+Matrix Cbv = {{1, 0, 0}, \
+              {0, 1, 0}, \
+              {0, 0, 1}};
 
-int initial_time = 0;
-int previous_time = intitial_time;
+Matrix Cbv_neg = matrix_scalar_multiply(-1, Cbv);
+
+Matrix Cbv_dot_prev = {{0, 0, 0}, \
+                       {0, 0, 0}, \
+                       {0, 0, 0}};
+
+Matrix Omega_bv = {{0, 0, 0}, \
+                   {0, 0, 0}, \
+                   {0, 0, 0}};;
+Matrix Cbv_dot = {{0, 0, 0}, \
+                  {0, 0, 0}, \
+                  {0, 0, 0}};;;
+unsigned long initial_time = 0;
+unsigned long previous_time = initial_time;
+
+// Variables that get used later:
+float Cbv_1_1 = 1;
+float Cbv_1_2 = 0;
+float Cbv_1_3 = 0;
+float Cbv_2_1 = 0;
+float Cbv_2_2 = 1;
+float Cbv_2_3 = 0;
+float Cbv_3_1 = 0;
+float Cbv_3_2 = 0;
+float Cbv_3_3 = 1;
+unsigned long timestep = 0;
+std::vector<float> eulers(3);
 
 void setup() {
   Serial.begin(115200);
@@ -27,27 +53,57 @@ void setup() {
   Wire.endTransmission(true);
 
   gyrocals = gyro_calibration(MPU_ADDR);
-  Serial.print(gyrocals[0]);
-  Serial.print(" ");
-  Serial.print(gyrocals[1]);
-  Serial.print(" ");
-  Serial.print(gyrocals[2]);
+//  Serial.print(gyrocals[0]);
+//  Serial.print(" ");
+//  Serial.print(gyrocals[1]);
+//  Serial.print(" ");
+//  Serial.print(gyrocals[2]);
+//  Serial.println();
+//  Serial.print("gyro cals complete");
+//  Serial.println();
+  previous_time = millis();
 }
 
 
 
 void loop() {
-  std::vector<float> pqr = gyrorates_rad_per_sec(MPU_ADDR, gyrocals);
-
-  int current = millis();
-  // Do integration stuff here
-  previous = current;
+  counter = counter + 1;
   
-  Serial.print(pqr[0], 3);
-  Serial.print(", ");
-  Serial.print(pqr[1], 3);
-  Serial.print(", ");
-  Serial.print(pqr[2], 3);
-  Serial.println();
-  delay(3);
+  unsigned long current_time = millis();
+  pqr = gyrorates_rad_per_sec(MPU_ADDR, gyrocals);
+  Omega_bv = build_Omegab_bv(pqr[0], pqr[1], pqr[2]);
+  Cbv_dot = matrix_multiply_3_by_3(Omega_bv, Cbv_neg);
+
+  timestep = current_time-previous_time;
+
+  Cbv_1_1 = Cbv_1_1 + trap_integration(Cbv_dot_prev[0][0], Cbv_dot[0][0], timestep);
+  Cbv_1_2 = Cbv_1_2 + trap_integration(Cbv_dot_prev[0][1], Cbv_dot[0][1], timestep);
+  Cbv_1_3 = Cbv_1_3 + trap_integration(Cbv_dot_prev[0][2], Cbv_dot[0][2], timestep);
+  Cbv_2_1 = Cbv_2_1 + trap_integration(Cbv_dot_prev[1][0], Cbv_dot[1][0], timestep);
+  Cbv_2_2 = Cbv_2_2 + trap_integration(Cbv_dot_prev[1][1], Cbv_dot[1][1], timestep);
+  Cbv_2_3 = Cbv_2_3 + trap_integration(Cbv_dot_prev[1][2], Cbv_dot[1][2], timestep);
+  Cbv_3_1 = Cbv_3_1 + trap_integration(Cbv_dot_prev[2][0], Cbv_dot[2][0], timestep);
+  Cbv_3_2 = Cbv_3_2 + trap_integration(Cbv_dot_prev[2][1], Cbv_dot[2][1], timestep);
+  Cbv_3_3 = Cbv_3_3 + trap_integration(Cbv_dot_prev[2][2], Cbv_dot[2][2], timestep);
+  Cbv = {{Cbv_1_1, Cbv_1_2, Cbv_1_3}, \
+         {Cbv_2_1, Cbv_2_2, Cbv_2_3}, \
+         {Cbv_3_1, Cbv_3_2, Cbv_3_3}};
+  
+  Cbv_neg = matrix_scalar_multiply(-1, Cbv);
+  previous_time = current_time;
+  Cbv_dot_prev = Cbv_dot;
+  
+  eulers = dcm_to_euler(Cbv);
+
+  if (counter % 10 == 0){
+    Serial.print(eulers[0], 3);
+    Serial.print(", ");
+    Serial.print(eulers[1], 3);
+    Serial.print(", ");
+    Serial.print(eulers[2], 3);
+    Serial.println();
+  }
+  if (counter == 100){
+    counter = 0;
+  }
 }

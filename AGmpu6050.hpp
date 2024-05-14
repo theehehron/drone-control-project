@@ -8,11 +8,16 @@
 #include "Wire.h"
 #include "attitude_representation.hpp"
 
+
+
 std::vector<int16_t> gyro_calibration(const int &MPU_ADDR);
 
-//Matrix Omegab_bv(int_16t &p, int_16t &q, int_16t &r);
-
+Matrix build_Omegab_bv(float p, float q, float r);
 
 std::vector<float> gyrorates_rad_per_sec(const int &MPU_ADDR, std::vector<int16_t> &gyrocals);
+
+void serialprint_matrix(Matrix &Cbv);
+
+
 
 #endif
