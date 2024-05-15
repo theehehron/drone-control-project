@@ -18,6 +18,10 @@ std::vector<float> gyrorates_rad_per_sec(const int &MPU_ADDR, std::vector<int16_
 
 void serialprint_matrix(Matrix &Cbv);
 
+void serialprint_eulers(std::vector<float> eulers);
+
+void serialprint_eulers_deg(std::vector<float> eulers);
+
 
 
 #endif

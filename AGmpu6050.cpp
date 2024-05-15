@@ -65,3 +65,23 @@ void serialprint_matrix(Matrix &Cbv){
   Serial.println(Cbv[2][2], 3);
   Serial.println("............");
 }
+
+
+
+void serialprint_eulers(std::vector<float> eulers){
+  Serial.print(eulers[0], 3);
+  Serial.print(", ");
+  Serial.print(eulers[1], 3);
+  Serial.print(", ");
+  Serial.println(eulers[2], 3);
+}
+
+
+
+void serialprint_eulers_deg(std::vector<float> eulers){
+  Serial.print(eulers[0]*180/PI, 3);
+  Serial.print(", ");
+  Serial.print(eulers[1]*180/PI, 3);
+  Serial.print(", ");
+  Serial.println(eulers[2]*180/PI, 3);
+}

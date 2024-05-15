@@ -72,7 +72,7 @@ void loop() {
   unsigned long current_time = millis();
   pqr = gyrorates_rad_per_sec(MPU_ADDR, gyrocals);
   Omega_bv = build_Omegab_bv(pqr[0], pqr[1], pqr[2]);
-  Cbv_dot = matrix_multiply_3_by_3(Omega_bv, Cbv_neg);
+  Cbv_dot = matrix_multiply_3_by_3(Cbv_neg, Omega_bv);
 
   timestep = current_time-previous_time;
 
@@ -96,12 +96,14 @@ void loop() {
   eulers = dcm_to_euler(Cbv);
 
   if (counter % 10 == 0){
-    Serial.print(eulers[0], 3);
-    Serial.print(", ");
-    Serial.print(eulers[1], 3);
-    Serial.print(", ");
-    Serial.print(eulers[2], 3);
-    Serial.println();
+//    serialprint_matrix(Cbv);
+//    Serial.print(Cbv_dot[0][2]);
+//    Serial.print(", ");
+    serialprint_eulers(eulers);
+//    Serial.print(Cbv_1_3);
+//    Serial.print(", ");
+//    Serial.println(-asin(Cbv_1_3));
+//    Serial.println(Cbv_neg[0][2]);
   }
   if (counter == 100){
     counter = 0;
