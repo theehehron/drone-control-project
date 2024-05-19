@@ -117,3 +117,11 @@ float trap_integration(float const &y0, float const &y1, unsigned long const &ti
     float delta_area = (y0+y1)*timestep_sec/2;
     return delta_area;
 }
+
+void matrix_integral(Matrix &mat, Matrix const &mat_dot, Matrix const &mat_dot_prev, unsigned long const &timestep){
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j < 3; j++){
+      mat[i][j] = mat[i][j] + trap_integration(mat_dot_prev[i][j], mat_dot[i][j], timestep);
+    }
+  }
+}
