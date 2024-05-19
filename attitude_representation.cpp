@@ -112,8 +112,8 @@ std::vector<float> dcm_to_quat(Matrix const &Cbv){
 
 
 float trap_integration(float const &y0, float const &y1, unsigned long const &timestep){
-    // takes y1, y2, and timestep in ms and integrates w.r.t. time
-    float timestep_sec = (static_cast<float>(timestep))/1000;
+    // takes y1, y2, and timestep in microseconds and integrates w.r.t. time
+    float timestep_sec = (static_cast<float>(timestep))/1000/1000;
     float delta_area = (y0+y1)*timestep_sec/2;
     return delta_area;
 }

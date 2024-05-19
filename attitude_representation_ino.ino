@@ -61,7 +61,7 @@ void setup() {
 //  Serial.println();
 //  Serial.print("gyro cals complete");
 //  Serial.println();
-  previous_time = millis();
+  previous_time =  micros();
 }
 
 
@@ -69,11 +69,11 @@ void setup() {
 void loop() {
   counter = counter + 1;
   
-  unsigned long current_time = millis();
   pqr = gyrorates_rad_per_sec(MPU_ADDR, gyrocals);
   Omega_bv = build_Omegab_bv(pqr[0], pqr[1], pqr[2]);
-  Cbv_dot = matrix_multiply_3_by_3(Cbv_neg, Omega_bv);
+  Cbv_dot = matrix_multiply_3_by_3(Omega_bv, matrix_scalar_multiply(-1, Cbv));  // Cbv_dot = -Omega_bv*Cbv
 
+  unsigned long current_time =  micros();
   timestep = current_time-previous_time;
 
   Cbv_1_1 = Cbv_1_1 + trap_integration(Cbv_dot_prev[0][0], Cbv_dot[0][0], timestep);
@@ -89,21 +89,17 @@ void loop() {
          {Cbv_2_1, Cbv_2_2, Cbv_2_3}, \
          {Cbv_3_1, Cbv_3_2, Cbv_3_3}};
   
-  Cbv_neg = matrix_scalar_multiply(-1, Cbv);
   previous_time = current_time;
   Cbv_dot_prev = Cbv_dot;
   
-  eulers = dcm_to_euler(Cbv);
+  
 
   if (counter % 10 == 0){
-//    serialprint_matrix(Cbv);
-//    Serial.print(Cbv_dot[0][2]);
-//    Serial.print(", ");
+    eulers = dcm_to_euler(Cbv);
+
+    Serial.print(timestep);
+    Serial.print(", ");
     serialprint_eulers(eulers);
-//    Serial.print(Cbv_1_3);
-//    Serial.print(", ");
-//    Serial.println(-asin(Cbv_1_3));
-//    Serial.println(Cbv_neg[0][2]);
   }
   if (counter == 100){
     counter = 0;

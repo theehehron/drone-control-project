@@ -35,4 +35,5 @@ codegen/
 # Other stuff
 *.dSYM
 *.vscode
+*.xlsx
 attitude_representation
