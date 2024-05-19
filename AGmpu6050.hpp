@@ -12,8 +12,6 @@
 
 std::vector<int16_t> gyro_calibration(const int &MPU_ADDR);
 
-Matrix build_Omegab_bv(float p, float q, float r);
-
 std::vector<float> gyrorates_rad_per_sec(const int &MPU_ADDR, std::vector<int16_t> &gyrocals);
 
 void serialprint_matrix(Matrix &Cbv);

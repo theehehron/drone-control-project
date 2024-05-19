@@ -28,13 +28,6 @@ std::vector<int16_t> gyro_calibration(const int &MPU_ADDR){
 }
 
 
-Matrix build_Omegab_bv(float p, float q, float r){
-    Matrix Omegab_bv = {{0, -r,  q}, \
-                        {r,  0, -p}, \
-                        {-q,  p,  0}};
-
-    return Omegab_bv;
-}
 
 std::vector<float> gyrorates_rad_per_sec(const int &MPU_ADDR, std::vector<int16_t> &gyrocals){
     Wire.beginTransmission(MPU_ADDR);

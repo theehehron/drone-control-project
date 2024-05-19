@@ -56,9 +56,9 @@ void loop() {
 
   if (counter % 20 == 0){
     eulers = dcm_to_euler(Cbv);
-
-    Serial.print(timestep);
-    Serial.print(", ");
+    
+//    Serial.print(timestep); // used for debugging and for optimization measurements.
+//    Serial.print(", ");
     serialprint_eulers(eulers);
   }
   if (counter == 100){

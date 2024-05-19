@@ -111,12 +111,24 @@ std::vector<float> dcm_to_quat(Matrix const &Cbv){
 
 
 
+Matrix build_Omegab_bv(float p, float q, float r){
+    Matrix Omegab_bv = {{0, -r,  q}, \
+                        {r,  0, -p}, \
+                        {-q,  p,  0}};
+
+    return Omegab_bv;
+}
+
+
+
 float trap_integration(float const &y0, float const &y1, unsigned long const &timestep){
     // takes y1, y2, and timestep in microseconds and integrates w.r.t. time
     float timestep_sec = (static_cast<float>(timestep))/1000/1000;
     float delta_area = (y0+y1)*timestep_sec/2;
     return delta_area;
 }
+
+
 
 void matrix_integral(Matrix &mat, Matrix const &mat_dot, Matrix const &mat_dot_prev, unsigned long const &timestep){
   for (int i = 0; i < 3; i++){
