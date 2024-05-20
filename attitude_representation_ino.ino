@@ -5,6 +5,7 @@
 const int MPU_ADDR = 0x68; // I2C address of the MPU-6050
 
 std::vector<int16_t> gyrocals(3);
+int16_t accel_cal = 0;
 std::vector<float> eulers(3);
 float PI_ag = 3.141593;
 int16_t counter = 0;
@@ -32,11 +33,13 @@ void setup() {
   Wire.endTransmission(true);
 
   gyrocals = gyro_calibration(MPU_ADDR);
+  accel_cal = accel_calibration(MPU_ADDR);
+//  Serial.print(accel_cal);
   previous_time = micros();
 }
 
 
- 
+
 void loop() {
   counter = counter + 1;
   
@@ -50,16 +53,26 @@ void loop() {
   // perform elementwise integration
   matrix_integral(Cbv, Cbv_dot, Cbv_dot_prev, timestep);
 
+  // perform accelerometer calculations
+  std::vector<float> accels = accels_g(MPU_ADDR, accel_cal);
+ 
+  
   previous_time = current_time;
   Cbv_dot_prev = Cbv_dot;
-  
+
 
   if (counter % 20 == 0){
     eulers = dcm_to_euler(Cbv);
+    std::vector<float> accel_angles = accel_angle(accels);
     
 //    Serial.print(timestep); // used for debugging and for optimization measurements.
 //    Serial.print(", ");
+    Serial.print(accel_angles[0]);
+    Serial.print(", ");
+    Serial.print(accel_angles[1]);
+    Serial.print(", ");
     serialprint_eulers(eulers);
+    
   }
   if (counter == 100){
     counter = 0;

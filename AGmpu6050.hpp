@@ -12,7 +12,11 @@
 
 std::vector<int16_t> gyro_calibration(const int &MPU_ADDR);
 
+int16_t accel_calibration(const int &MPU_ADDR);
+
 std::vector<float> gyrorates_rad_per_sec(const int &MPU_ADDR, std::vector<int16_t> &gyrocals);
+
+std::vector<float> accels_g(const int &MPU_ADDR, int16_t &accel_cal);
 
 void serialprint_matrix(Matrix &Cbv);
 

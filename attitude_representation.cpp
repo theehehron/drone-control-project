@@ -137,3 +137,12 @@ void matrix_integral(Matrix &mat, Matrix const &mat_dot, Matrix const &mat_dot_p
     }
   }
 }
+
+
+
+std::vector<float> accel_angle(std::vector<float> &accels){
+  std::vector<float> angle(2);
+  angle[0] = -atan2(accels[0], accels[2]);
+  angle[1] = atan2(accels[1], accels[2]);
+  return angle;
+}

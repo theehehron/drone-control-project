@@ -26,5 +26,6 @@ float trap_integration(float const &y0, float const &y1, unsigned long const &ti
 
 void matrix_integral(Matrix &mat, Matrix const &mat_dot, Matrix const &mat_dot_prev, unsigned long const &timestep);
 
+std::vector<float> accel_angle(std::vector<float> &accels);
 
 #endif

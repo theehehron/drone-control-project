@@ -29,6 +29,37 @@ std::vector<int16_t> gyro_calibration(const int &MPU_ADDR){
 
 
 
+int16_t accel_calibration(const int &MPU_ADDR){
+    // trys to toss bias and calculate sensitivity scale factor. Should only be run monthly or something to keep accelerometer in cal. only works with z-axis facing up (or down).
+    int16_t accel_x;
+    int16_t accel_y;
+    int16_t accel_z;
+    int16_t accel_cal = 0;
+    long int sum = 0;
+    int count = 100;
+    for(int i = 1; i < count; i++){
+        Wire.beginTransmission(MPU_ADDR);
+        Wire.write(0x3B);
+        Wire.endTransmission(false);
+        Wire.requestFrom(MPU_ADDR, 3*2, true);
+        accel_x = Wire.read()<<8 | Wire.read();
+        accel_y = Wire.read()<<8 | Wire.read();
+        accel_z = Wire.read()<<8 | Wire.read();
+        sum = (sum + accel_z);
+        delay(3);
+    }
+
+
+    if(sum >= 0){
+        accel_cal = sum/count; // WARNING THIS NEEDS AN ABSOLUTE VALUE SITUATION  
+    }else {
+        accel_cal = -sum/count;
+    }
+    return accel_cal;
+}
+
+
+
 std::vector<float> gyrorates_rad_per_sec(const int &MPU_ADDR, std::vector<int16_t> &gyrocals){
     Wire.beginTransmission(MPU_ADDR);
     Wire.write(0x43); // MPU-6050 Register Map and Descriptions
@@ -39,6 +70,21 @@ std::vector<float> gyrorates_rad_per_sec(const int &MPU_ADDR, std::vector<int16_
                                      static_cast<float>(((Wire.read()<<8 | Wire.read()) - gyrocals[2])/131)*3.1415927/180};
     return gyro_rates;
 }
+
+
+
+std::vector<float> accels_g(const int &MPU_ADDR, int16_t &accel_cal){
+  Wire.beginTransmission(MPU_ADDR);
+  Wire.write(0x3B);
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU_ADDR, 3*2, true);
+  std::vector<float> accels_g = {static_cast<float>(Wire.read()<<8 | Wire.read())/static_cast<float>(accel_cal) , \
+                                 static_cast<float>(Wire.read()<<8 | Wire.read())/static_cast<float>(accel_cal) , \
+                                 static_cast<float>(Wire.read()<<8 | Wire.read())/static_cast<float>(accel_cal)};
+  return accels_g;  
+}
+
+
 
 void serialprint_matrix(Matrix &Cbv){
   Serial.print(Cbv[0][0], 3);
