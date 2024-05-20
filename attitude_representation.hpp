@@ -28,4 +28,8 @@ void matrix_integral(Matrix &mat, Matrix const &mat_dot, Matrix const &mat_dot_p
 
 std::vector<float> accel_angle(std::vector<float> &accels);
 
+void dcm_integration(Matrix &Cbv, const std::vector<float> &pqr, Matrix &Cbv_dot, const unsigned long &timestep);
+
+void complementary_filter(float &roll_angle, float &pitch_angle, const std::vector<float> &pqr, const std::vector<float> &accels, const unsigned long &timestep, const float gyro_ratio);
+
 #endif

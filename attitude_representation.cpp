@@ -140,9 +140,33 @@ void matrix_integral(Matrix &mat, Matrix const &mat_dot, Matrix const &mat_dot_p
 
 
 
-std::vector<float> accel_angle(std::vector<float> &accels){
+std::vector<float> accel_angle(const std::vector<float> &accels){
+  // takes accelerometer reading in gs and outputs pitch angle and roll angle
   std::vector<float> angle(2);
   angle[0] = -atan2(accels[0], accels[2]);
   angle[1] = atan2(accels[1], accels[2]);
   return angle;
+}
+
+
+
+void dcm_integration(Matrix &Cbv, const std::vector<float> &pqr, Matrix &Cbv_dot, const unsigned long &timestep){
+  Matrix Omega_bv = build_Omegab_bv(pqr[0], pqr[1], pqr[2]);
+  Matrix Cbv_dot_temp = matrix_multiply_3_by_3(Omega_bv, matrix_scalar_multiply(-1, Cbv));
+  matrix_integral(Cbv, Cbv_dot_temp, Cbv_dot, timestep);
+  Cbv_dot = Cbv_dot_temp;
+}
+
+
+void complementary_filter(float &roll_angle, float &pitch_angle, const std::vector<float> &pqr, const std::vector<float> &accels, const unsigned long &timestep, const float gyro_ratio){
+  float timestep_sec = (static_cast<float>(timestep))/1000/1000;
+  float delta_roll = pqr[0]*timestep_sec;
+  float delta_pitch = pqr[1]*timestep_sec;
+  float gyro_roll_angle = roll_angle + delta_roll;
+  float gyro_pitch_angle = pitch_angle + delta_pitch;
+  
+  std::vector<float> accel_angles = accel_angle(accels);
+  
+  roll_angle  = gyro_ratio*gyro_roll_angle  + (1-gyro_ratio)*accel_angles[1];
+  pitch_angle = gyro_ratio*gyro_pitch_angle + (1-gyro_ratio)*accel_angles[0];
 }
